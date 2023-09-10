@@ -1,0 +1,92 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Age {
+  PUPPY
+  ADULT
+  OLD
+}
+
+enum Stature {
+  SMALL
+  MEDIUM
+  BIG
+}
+
+enum Independence {
+  LOW
+  AVERAGE
+  HIGH
+}
+
+enum Energy {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum Environment {
+  SMALL
+  MEDIUM
+  WIDE
+}
+
+model Pet {
+  id                        String                    @id @default(uuid())
+  name                      String
+  age                       Age
+  stature                   Stature
+  independence              Independence
+  energy                    Energy
+  environment               Environment
+  about                     String
+  created_at                DateTime                  @default(now())
+  pet_image                 PetImage[]
+  requirements_for_adoption RequirementsForAdoption[]
+  organization              Organization?             @relation(fields: [organization_id], references: [id])
+  organization_id           String?
+
+  @@map("pets")
+}
+
+model PetImage {
+  id         String   @id @default(uuid())
+  image_name String
+  created_at DateTime @default(now())
+  pet        Pet      @relation(fields: [pet_id], references: [id])
+  pet_id     String
+
+  @@map("pet_images")
+}
+
+model RequirementsForAdoption {
+  id          String   @id @default(uuid())
+  requirement String
+  created_at  DateTime @default(now())
+  pet         Pet      @relation(fields: [pet_id], references: [id])
+  pet_id      String
+
+  @@map("requirements_for_adoption")
+}
+
+model Organization {
+  id            String   @id @default(uuid())
+  name          String
+  owner         String
+  email         String   @unique
+  cep           String
+  address       String
+  whatsapp      String
+  password_hash String
+  created_at    DateTime @default(now())
+
+  pet Pet[]
+
+  @@map("organization")
+}
