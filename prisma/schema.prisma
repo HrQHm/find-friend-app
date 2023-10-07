@@ -37,6 +37,24 @@ enum Environment {
   WIDE
 }
 
+model Organization {
+  id            String   @id @default(uuid())
+  name          String
+  owner         String
+  email         String   @unique
+  cep           String
+  address       String
+  city          String
+  uf            String
+  whatsapp      String
+  password_hash String
+  created_at    DateTime @default(now())
+
+  pet Pet[]
+
+  @@map("organization")
+}
+
 model Pet {
   id                        String                    @id @default(uuid())
   name                      String
@@ -49,8 +67,8 @@ model Pet {
   created_at                DateTime                  @default(now())
   pet_image                 PetImage[]
   requirements_for_adoption RequirementsForAdoption[]
-  organization              Organization?             @relation(fields: [organization_id], references: [id])
-  organization_id           String?
+  organization              Organization              @relation(fields: [organization_id], references: [id])
+  organization_id           String
 
   @@map("pets")
 }
@@ -58,6 +76,7 @@ model Pet {
 model PetImage {
   id         String   @id @default(uuid())
   image_name String
+  path       String
   created_at DateTime @default(now())
   pet        Pet      @relation(fields: [pet_id], references: [id])
   pet_id     String
@@ -73,20 +92,4 @@ model RequirementsForAdoption {
   pet_id      String
 
   @@map("requirements_for_adoption")
-}
-
-model Organization {
-  id            String   @id @default(uuid())
-  name          String
-  owner         String
-  email         String   @unique
-  cep           String
-  address       String
-  whatsapp      String
-  password_hash String
-  created_at    DateTime @default(now())
-
-  pet Pet[]
-
-  @@map("organization")
 }
